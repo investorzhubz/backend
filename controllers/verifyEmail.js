@@ -33,14 +33,14 @@ const sendVerification=async(req,res)=>{
       const transporter=nodemailer.createTransport({
         service:'gmail',
         auth:{
-          user:'aiaffiliatedmarketing@gmail.com',
+          user:'investorzhubz@gmail.com',
           pass:process.env.SMTP_PASSWORD
         }
       })
       const message={
         from: {
-          name: 'AFM-Bot',
-          address: 'aiaffiliatedmarketing@gmail.com'
+          name: 'Investors Hub',
+          address: 'investorzhubz@gmail.com'
         },
         to:user.email,
         text:'Please click on the link to Confirm Your Email',
@@ -211,7 +211,7 @@ const sendVerification=async(req,res)=>{
                   <!-- start copy -->
                   <tr>
                     <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
-                      <p style="margin: 0;">Tap the button below to confirm your email address. If you didn't create an account with <a href="${process.env.SITE_NAME}">AFM-Bot</a>, you can safely delete this email.</p>
+                      <p style="margin: 0;">Tap the button below to confirm your email address. If you didn't create an account with <a href="${process.env.SITE_NAME}">Investors Hub</a>, you can safely delete this email.</p>
                     </td>
                   </tr>
                   <!-- end copy -->
@@ -248,7 +248,7 @@ const sendVerification=async(req,res)=>{
                   <!-- start copy -->
                   <tr>
                     <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-bottom: 3px solid #d4dadf">
-                      <p style="margin: 0;">Cheers,<br> AFM-Bot</p>
+                      <p style="margin: 0;">Cheers,<br> Investors Hub</p>
                     </td>
                   </tr>
                   <!-- end copy -->
@@ -284,7 +284,7 @@ const sendVerification=async(req,res)=>{
                   <!-- start unsubscribe -->
                   <tr>
                     <td align="center" bgcolor="#e9ecef" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-                      <p style="margin: 0;">AFM-Bot</p>
+                      <p style="margin: 0;">Investors Hub</p>
                       
                     </td>
                   </tr>

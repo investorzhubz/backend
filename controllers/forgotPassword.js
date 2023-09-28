@@ -27,12 +27,12 @@ const forgotPassword=async(req,res)=>{
     const transporter=nodemailer.createTransport({
         service:'gmail',
         auth:{
-          user:'aiaffiliatedmarketing@gmail.com',
+          user:'investorzhubz@gmail.com',
           pass:process.env.SMTP_PASSWORD
         }
       })
       const message={
-        from:'aiaffiliatedmarketing@gmail.com',
+        from:'investorzhubz@gmail.com',
         to:user.email,
         subject:'Reset Password',
         html:`<html xmlns="http://www.w3.org/1999/xhtml">
@@ -494,7 +494,7 @@ const forgotPassword=async(req,res)=>{
                           <td class="content-cell">
                             <div class="f-fallback">
                               <h1>Hi ${user.username},</h1>
-                              <p>You recently requested to reset your password for your AFM-bot account. Use the button below to reset it. <strong>This password reset is only valid for the next 24 hours.</strong></p>
+                              <p>You recently requested to reset your password for your Investors Hub account. Use the button below to reset it. <strong>This password reset is only valid for the next 24 hours.</strong></p>
                               <!-- Action -->
                               <table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0" role="presentation">
                                 <tr>
@@ -513,7 +513,7 @@ const forgotPassword=async(req,res)=>{
                               </table>
                               <p>For security, this request was received from a ${req.device.type} device. If you did not request a password reset, please ignore this email or <a href="${process.env.SITE_NAME}/contact">contact support</a> if you have questions.</p>
                               <p>Thanks,
-                                <br>The AFM-Bot team</p>
+                                <br>The Investors Hub team</p>
                               <!-- Sub copy -->
                               <table class="body-sub" role="presentation">
                                 <tr>
@@ -535,7 +535,7 @@ const forgotPassword=async(req,res)=>{
                         <tr>
                           <td class="content-cell" align="center">
                             <p class="f-fallback sub align-center">
-                              AFM-Bot
+                              Investors Hub
                         
                             </p>
                           </td>

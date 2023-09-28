@@ -25,7 +25,7 @@ const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_K
     if(amount==''){
         throw new customErrorAPI('Enter an amount',StatusCodes.BAD_REQUEST)
     }
-    if(amount<500){
+    if(amount<200){
         throw new customErrorAPI('Enter an amount of at least 500 XAF',StatusCodes.BAD_REQUEST)
     }
 
@@ -164,8 +164,8 @@ const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_K
            if(!amount){
             throw new customErrorAPI('Enter an amount to withdraw',StatusCodes.BAD_REQUEST)
         }
-        if(amount<500){
-          throw new customErrorAPI('Minimum withrawal amount is 500 FCFA',StatusCodes.BAD_REQUEST)
+        if(amount<200){
+          throw new customErrorAPI('Minimum withrawal amount is 200 FCFA',StatusCodes.BAD_REQUEST)
          }
          let  type;
          let  apiKey;
@@ -364,8 +364,8 @@ const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_K
            if(!amount){
             throw new customErrorAPI('Enter an amount to withdraw',StatusCodes.BAD_REQUEST)
         }
-        if(amount<500){
-          throw new customErrorAPI('Minimum withrawal amount is 500 FCFA',StatusCodes.BAD_REQUEST)
+        if(amount<200){
+          throw new customErrorAPI('Minimum withrawal amount is 200 FCFA',StatusCodes.BAD_REQUEST)
          }
         if(amount>user.accountBalnace){
           throw new customErrorAPI('Insufficient Balance',StatusCodes.BAD_REQUEST)
@@ -430,8 +430,8 @@ const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_K
       if (!amount) {
         throw new customErrorAPI('Enter an amount', StatusCodes.BAD_REQUEST);
       }
-      if(amount<500){
-        throw new customErrorAPI('Enter an amount of at least 500 XAF',StatusCodes.BAD_REQUEST)
+      if(amount<200){
+        throw new customErrorAPI('Enter an amount of at least 200 XAF',StatusCodes.BAD_REQUEST)
     }
       const  data = {
         "amount":amount ,
