@@ -67,7 +67,7 @@ const buyPlan=async(req,res)=>{
 
 
     }else{
-           if(number){
+           if(!number){
             throw new customErrorAPI('Enter a valid Number',StatusCodes.BAD_REQUEST)
 
 
