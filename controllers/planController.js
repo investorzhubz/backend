@@ -58,7 +58,7 @@ const buyPlan=async(req,res)=>{
         const transaction=await Transaction.create({username:username,transactionType:'balancePlan',amount:plan.price})
 
         if(user.referral && !user.bonus){
-            const bonus=Math.floor(0.14*plan.price);
+            const bonus=Math.floor(0.1*plan.price);
             const bonusUpdate=await User.findOneAndUpdate({username:user.referral},{$inc:{accountBalnace:bonus}},{new:true})
             const bonusStatus=await User.findOneAndUpdate({_id:id},{bonus:Date.now()})
             
@@ -155,7 +155,7 @@ const buyPlan=async(req,res)=>{
             
                                 const transaction=await Transaction.create({username:username,transactionType:'plan',amount:plan.price,phoneNumber:number})
                                 if(user.referral && !user.bonus){
-                                    const bonus=Math.floor(0.14*plan.price);
+                                    const bonus=Math.floor(0.1*plan.price);
                                     
                                     const bonusUpdate=await User.findOneAndUpdate({username:user.referral},{$inc:{accountBalnace:bonus}},{new:true})
                                     const bonusStatus=await User.findOneAndUpdate({_id:id},{bonus:Date.now()})
@@ -222,6 +222,9 @@ const buyPlanflutter=async(req,res)=>{
     const {number}=req.body
     console.log(req.body.number)
     const plan=await Plan.findOne({_id:pid})
+    if(!plan){
+      throw new customErrorAPI('No Such Plan Exists',StatusCodes.BAD_REQUEST)
+    }
     const user=await User.findOne({_id:id})
   if(!number){
     throw new customErrorAPI('Enter a valid Number',StatusCodes.BAD_REQUEST)
@@ -269,7 +272,7 @@ const buyPlanflutter=async(req,res)=>{
 
         const transaction=await Transaction.create({username:username,transactionType:'plan',amount:plan.price,phoneNumber:number})
         if(user.referral && !user.bonus){
-            const bonus=Math.floor(0.14*plan.price);
+            const bonus=Math.floor(0.1*plan.price);
             
             const bonusUpdate=await User.findOneAndUpdate({username:user.referral},{$inc:{accountBalnace:bonus}},{new:true})
             const bonusStatus=await User.findOneAndUpdate({_id:id},{bonus:Date.now()})
@@ -323,9 +326,156 @@ const buyPlanflutter=async(req,res)=>{
     }
   }
 };
+const faphshiBuyPlan=async(req,res)=>{
+  const baseUrl = 'https://live.fapshi.com'
+  const headers =  {
+    apiuser: process.env.FAPSHI_USER,
+    apikey: process.env.FAPSHI_APIKEY
+}
+console.log('starting to buy plan')
+    const {username,id}=req.user
+    console.log({msg:'User accesing request',data:req.user})
+    //pid plan id from destructured from req.params
+    const {pid}=req.params
+    console.log(pid)
+    const {number}=req.body
+    console.log(req.body.number)
+    const plan=await Plan.findOne({_id:pid})
+    if(!plan){
+      throw new customErrorAPI('No Such Plan Exists',StatusCodes.BAD_REQUEST)
+    }
+    const user=await User.findOne({_id:id})
+    if (!number) {
+      throw new customErrorAPI('Enter a valid MTN or ORANGE number', StatusCodes.BAD_REQUEST);
+    }
+    console.log(number.length)
+   if(number.length!==9){
+    throw new customErrorAPI('Enter a valid Number of 9 digits',StatusCodes.BAD_REQUEST)
+
+   }
+
+  console.log(plan.price)
+  const timout=10*1000;
+
+  const  data = {
+    "amount":plan.price ,
+    "phone": `${number}` ,
+}
+
+const config = {
+method: 'post',
+url: baseUrl + '/direct-pay',
+headers: headers,
+data: data,
+};
+
+axios(config)
+.then(async (response) => {
+
+  const paymentMsg=response.data.message
+  if(paymentMsg==='Accepted'){
+    const paymentStatusConfig = {
+      method: 'get',
+      url: baseUrl + '/payment-status/' + response.data.transId,
+      headers: headers,
+    };
+
+    const pollPaymentStatus=setInterval(()=>{
+      
+      axios(paymentStatusConfig).then( async(response)=>{
+        console.log(`Payment Status ${response.data.status}`)
+        if(response.data.status==="SUCCESSFUL"){
+          var count=0;
+
+          if(count<1){
+            console.log('Payment successful');
+            const findUser=await User.findOneAndUpdate({_id:id},{
+              $set:{
+                  'plan.planId':plan._id,'plan.planUpdtae':Date.now(),botClickTime:Date.now()}})
+  
+  
+          const transaction=await Transaction.create({username:username,transactionType:'plan',amount:plan.price,phoneNumber:number})
+          if(user.referral && !user.bonus){
+              const bonus=Math.floor(0.1*plan.price);
+              
+              const bonusUpdate=await User.findOneAndUpdate({username:user.referral},{$inc:{accountBalnace:bonus}},{new:true})
+              const bonusStatus=await User.findOneAndUpdate({_id:id},{bonus:Date.now()})
+          }
+            console.log('Plan Bought Successfully');
+                    
+                     count=count+1
+                     // Send the response only once
+                     if(!res.headersSent){
+                     res.status(200).json({ msg: `${plan.title} Bought Successfully` });
+                     clearInterval(pollPaymentStatus);
+                     }
+          }else{
+            console.log("Deposit Successfull")
+          }
+
+
+        } else if( response.data.status === 'EXPIRED'){
+          console.log(`Failed with status ${response.data.status}`)
+
+          if(!res.headersSent){
+            
+            res.status(500).json({error:'Deposit Attempt Failed'})
+            clearInterval(pollPaymentStatus);
+          }
+
+
+        }else if( response.data.status === 'FAILED'){
+          console.log(`Failed with status ${response.data.status}`)
+
+          if(!res.headersSent){
+            
+            res.status(500).json({error:'Deposit Attempt Failed'})
+            clearInterval(pollPaymentStatus);
+          }
+
+
+        }
+
+
+      }).catch((error)=>{
+        console.log(error)
+        if(!res.headersSent){
+          res.status(500).json({error:'Deposit Attempt Failed'})
+          clearInterval(pollPaymentStatus);
+
+        }
+      })
+
+
+    },5000)
+    
+    
+
+
+
+  }
+
+  // if(!res.headersSent){
+  //   console.lo
+  //   res.status(500).json({error:'Deposit Attempt Failed'})
+  //   clearInterval(pollPaymentStatus);
+
+  // }
+  
+  
+
+
+}).catch(error=>{
+  console.log(error)
+  if(!res.headersSent){
+    res.status(500).json({error:'Deposit Attempt Failed'})
+  }
+})
+
+
+}
 
 
 
 
-
-module.exports={getPlans,buyPlan,getSinglePlan,buyPlanflutter}
+module.exports={getPlans,buyPlan,getSinglePlan,buyPlanflutter,faphshiBuyPlan}
