@@ -411,236 +411,136 @@ const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_K
 
     }   
 
-  //   const mesombDeposits=async(req,res)=>{
-  //     const baseUrl = 'https://live.fapshi.com'
-  //     const headers =  {
-  //       apiuser: process.env.FAPSHI_USER,
-  //       apikey: process.env.FAPSHI_APIKEY
-  //   }
+    const mesombDeposits=async(req,res)=>{
+      const baseUrl = 'https://live.fapshi.com'
+      const headers =  {
+        apiuser: process.env.FAPSHI_USER,
+        apikey: process.env.FAPSHI_APIKEY
+    }
 
-  //     const { username, id } = req.user;
-  //     const { amount, number } = req.body;
-  //     console.log(amount)
-  //     const timout=10*1000;
+      const { username, id } = req.user;
+      const { amount, number } = req.body;
+      console.log(amount)
+      const timout=10*1000;
     
-  //     if (!number) {
-  //       throw new customErrorAPI('Enter a valid MTN or ORANGE number', StatusCodes.BAD_REQUEST);
-  //     }
+      if (!number) {
+        throw new customErrorAPI('Enter a valid MTN or ORANGE number', StatusCodes.BAD_REQUEST);
+      }
     
-  //     if (!amount) {
-  //       throw new customErrorAPI('Enter an amount', StatusCodes.BAD_REQUEST);
-  //     }
-  //     if(amount<500){
-  //       throw new customErrorAPI('Enter an amount of at least 500 XAF',StatusCodes.BAD_REQUEST)
-  //   }
-  //     const  data = {
-  //       "amount":amount ,
-  //       "phone": `${number}` ,
-  //   }
-
-  // const config = {
-  //   method: 'post',
-  //   url: baseUrl + '/direct-pay',
-  //   headers: headers,
-  //   data: data,
-  // };
-
-  // axios(config)
-  //   .then(async (response) => {
-
-  //     const paymentMsg=response.data.message
-  //     if(paymentMsg==='Accepted'){
-  //       const paymentStatusConfig = {
-  //         method: 'get',
-  //         url: baseUrl + '/payment-status/' + response.data.transId,
-  //         headers: headers,
-  //       };
-
-  //       const pollPaymentStatus=setInterval(()=>{
-          
-  //         axios(paymentStatusConfig).then( async(response)=>{
-  //           console.log(`Payment Status ${response.data.status}`)
-  //           if(response.data.status==="SUCCESSFUL"){
-  //             var count=0;
-
-  //             if(count<1){
-  //               console.log(`This is the data amount ${amount}`)
-  //             const user=await User.findOneAndUpdate({_id:id},{$inc:{accountBalnace:parseInt(amount)}})
-  //             const transaction=await Transaction.create({username:username,transactionType:'deposit',amount:amount,phoneNumber:number})
-  //                       console.log({msg:"Deposit Succesful"})
-  //                        console.log('Payment successful');
-                        
-  //                        count=count+1
-  //                        if(!res.headersSent){
-  //                         res.status(StatusCodes.OK).json({msg:"Deposit Successful"})
-  //                        clearInterval(pollPaymentStatus);
-  //                        }
-  //             }else{
-  //               console.log("Deposit Successfull")
-  //             }
-
-
-  //           } else if( response.data.status === 'EXPIRED'){
-  //             console.log(`Failed with status ${response.data.status}`)
-
-  //             if(!res.headersSent){
-                
-  //               res.status(500).json({error:'Deposit Attempt Failed'})
-  //               clearInterval(pollPaymentStatus);
-  //             }
-
-
-  //           }else if( response.data.status === 'FAILED'){
-  //             console.log(`Failed with status ${response.data.status}`)
-
-  //             if(!res.headersSent){
-                
-  //               res.status(500).json({error:'Deposit Attempt Failed'})
-  //               clearInterval(pollPaymentStatus);
-  //             }
-
-
-  //           }
-
-
-  //         }).catch((error)=>{
-  //           console.log(error)
-  //           if(!res.headersSent){
-  //             res.status(500).json({error:'Deposit Attempt Failed'})
-  //             clearInterval(pollPaymentStatus);
-
-  //           }
-  //         })
-
-
-  //       },5000)
-        
-        
-
-
-
-  //     }
-
-  //     // if(!res.headersSent){
-  //     //   console.lo
-  //     //   res.status(500).json({error:'Deposit Attempt Failed'})
-  //     //   clearInterval(pollPaymentStatus);
-
-  //     // }
-      
-      
-
-
-  //   }).catch(error=>{
-  //     console.log(error)
-  //     if(!res.headersSent){
-  //       res.status(500).json({error:'Deposit Attempt Failed'})
-  //     }
-  //   })
-
-
-  //   }
-  const mesombDeposits = async (req, res) => {
-    const baseUrl = 'https://live.fapshi.com';
-    const headers = {
-      apiuser: process.env.FAPSHI_USER,
-      apikey: process.env.FAPSHI_APIKEY,
-    };
-  
-    const { username, id } = req.user;
-    const { amount, number } = req.body;
-  
-    if (!number) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Enter a valid MTN or ORANGE number' });
+      if (!amount) {
+        throw new customErrorAPI('Enter an amount', StatusCodes.BAD_REQUEST);
+      }
+      if(amount<500){
+        throw new customErrorAPI('Enter an amount of at least 500 XAF',StatusCodes.BAD_REQUEST)
     }
-  
-    if (!amount) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Enter an amount' });
+      const  data = {
+        "amount":amount ,
+        "phone": `${number}` ,
     }
-  
-    if (amount < 500) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Enter an amount of at least 500 XAF' });
-    }
-  
-    const data = {
-      amount: amount,
-      phone: `${number}`,
-    };
-  
-    const config = {
-      method: 'post',
-      url: baseUrl + '/direct-pay',
-      headers: headers,
-      data: data,
-    };
-  
-    try {
-      const response = await axios(config);
-  
-      const paymentMsg = response.data.message;
-      if (paymentMsg === 'Accepted') {
+
+  const config = {
+    method: 'post',
+    url: baseUrl + '/direct-pay',
+    headers: headers,
+    data: data,
+  };
+
+  axios(config)
+    .then(async (response) => {
+
+      const paymentMsg=response.data.message
+      if(paymentMsg==='Accepted'){
         const paymentStatusConfig = {
           method: 'get',
           url: baseUrl + '/payment-status/' + response.data.transId,
           headers: headers,
         };
-  
-        const pollPaymentStatus = setInterval(async () => {
-          try {
-            const statusResponse = await axios(paymentStatusConfig);
-            console.log(`Payment Status ${statusResponse.data.status}`);
-            if (statusResponse.data.status === 'SUCCESSFUL') {
-              if (count < 1) {
-                console.log(`This is the data amount ${amount}`);
-                const user = await User.findOneAndUpdate(
-                  { _id: id },
-                  { $inc: { accountBalnace: parseInt(amount) } }
-                );
-                const transaction = await Transaction.create({
-                  username: username,
-                  transactionType: 'deposit',
-                  amount: amount,
-                  phoneNumber: number,
-                });
-                console.log({ msg: 'Deposit Successful' });
-                console.log('Payment successful');
-                count = count + 1;
-                if (!res.headersSent) {
-                  res.status(StatusCodes.OK).json({ msg: 'Deposit Successful' });
-                  clearInterval(pollPaymentStatus);
-                }
-              } else {
-                console.log('Deposit Successful');
+
+        const pollPaymentStatus=setInterval(()=>{
+          
+          axios(paymentStatusConfig).then( async(response)=>{
+            console.log(`Payment Status ${response.data.status}`)
+            if(response.data.status==="SUCCESSFUL"){
+              var count=0;
+
+              if(count<1){
+                console.log(`This is the data amount ${amount}`)
+              const user=await User.findOneAndUpdate({_id:id},{$inc:{accountBalnace:parseInt(amount)}})
+              const transaction=await Transaction.create({username:username,transactionType:'deposit',amount:amount,phoneNumber:number})
+                        console.log({msg:"Deposit Succesful"})
+                         console.log('Payment successful');
+                        
+                         count=count+1
+                         if(!res.headersSent){
+                          res.status(StatusCodes.OK).json({msg:"Deposit Successful"})
+                         clearInterval(pollPaymentStatus);
+                         }
+              }else{
+                console.log("Deposit Successfull")
               }
-            } else if (statusResponse.data.status === 'EXPIRED') {
-              console.log(`Failed with status ${statusResponse.data.status}`);
-              if (!res.headersSent) {
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Deposit Attempt Failed' });
+
+
+            } else if( response.data.status === 'EXPIRED'){
+              console.log(`Failed with status ${response.data.status}`)
+
+              if(!res.headersSent){
+                
+                res.status(500).json({error:'Deposit Attempt Failed'})
                 clearInterval(pollPaymentStatus);
               }
-            } else if (statusResponse.data.status === 'FAILED') {
-              console.log(`Failed with status ${statusResponse.data.status}`);
-              if (!res.headersSent) {
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Deposit Attempt Failed' });
+
+
+            }else if( response.data.status === 'FAILED'){
+              console.log(`Failed with status ${response.data.status}`)
+
+              if(!res.headersSent){
+                
+                res.status(500).json({error:'Deposit Attempt Failed'})
                 clearInterval(pollPaymentStatus);
               }
+
+
             }
-          } catch (error) {
-            console.error(error);
-            if (!res.headersSent) {
-              res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Deposit Attempt Failed' });
+
+
+          }).catch((error)=>{
+            console.log(error)
+            if(!res.headersSent){
+              res.status(500).json({error:'Deposit Attempt Failed'})
               clearInterval(pollPaymentStatus);
+
             }
-          }
-        }, 5000);
+          })
+
+
+        },5000)
+        
+        
+
+
+
       }
-    } catch (error) {
-      console.error(error);
-      if (!res.headersSent) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Deposit Attempt Failed' });
+
+      // if(!res.headersSent){
+      //   console.lo
+      //   res.status(500).json({error:'Deposit Attempt Failed'})
+      //   clearInterval(pollPaymentStatus);
+
+      // }
+      
+      
+
+
+    }).catch(error=>{
+      console.log(error)
+      if(!res.headersSent){
+        res.status(500).json({error:'Deposit Attempt Failed'})
       }
+    })
+
+
     }
-  };
+
   
 
 //     const mesombWithdrawal=async(req,res)=>{
