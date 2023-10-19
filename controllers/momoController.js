@@ -629,7 +629,7 @@ const mesombWithdrawal = async (req, res) => {
       type = 'MTN';
     }
 
-    // Use environment variables or a secure configuration management system for sensitive keys.
+   
     const payment = new PaymentOperation({
       applicationKey: process.env.M_APPLICATIONKEY,
       accessKey: process.env.M_ACCESSKEY,
