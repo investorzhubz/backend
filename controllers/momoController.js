@@ -594,7 +594,7 @@ const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_K
                 console.log(`This is the data amount ${amount}`);
                 const user = await User.findOneAndUpdate(
                   { _id: id },
-                  { $inc: { accountBalance: parseInt(amount) } }
+                  { $inc: { accountBalnace: parseInt(amount) } }
                 );
                 const transaction = await Transaction.create({
                   username: username,
@@ -700,7 +700,7 @@ const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_K
 const mesombWithdrawal = async (req, res) => {
   try {
     const { username, id } = req.user;
-    const { amount, withdrawalPhoneNumber } = req.body;
+    const { amount } = req.body;
 
     // Fetch the user's information from a secure source (e.g., JWT claims).
     const user = await User.findOne({ _id: id });
@@ -713,13 +713,11 @@ const mesombWithdrawal = async (req, res) => {
       return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Enter a valid amount of at least 500 XAF' });
     }
 
-    if (amount > user.accountBalance) {
+    if (amount > user.accountBalnace) {
       return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Insufficient Balance' });
     }
 
-    if (withdrawalPhoneNumber !== user.phoneNumber) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Withdrawal phone number does not match user record' });
-    }
+
 
     let type;
 
@@ -742,7 +740,7 @@ const mesombWithdrawal = async (req, res) => {
 
     if (response.isOperationSuccess() && response.isTransactionSuccess()) {
       // Deduct the withdrawal amount from the user's account balance within a secure database transaction.
-      const updatedUser = await User.findOneAndUpdate({ _id: id }, { $inc: { accountBalance: -amount } });
+      const updatedUser = await User.findOneAndUpdate({ _id: id }, { $inc: { accountBalnace: -amount } });
 
       // Log the withdrawal transaction securely.
       const transaction = await Transaction.create({
